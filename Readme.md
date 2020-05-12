@@ -3,5 +3,5 @@
 ------
 
 **List:**
-1.PWM控制直流电机转速
-2.红外测距实现
+1.LCD & Seg7 & Key_Matrix_Scan in ASM
+2.Serial Communication in ASM
