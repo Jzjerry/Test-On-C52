@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\SendKey.obj" 
+TO ".\Objects\Send" 
+PRINT(".\Listings\Send.m51") RAMSIZE(256) 

@@ -1,0 +1,210 @@
+A51 MACRO ASSEMBLER  SENDKEY                                                              05/12/2020 10:11:24 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\SendKey.obj
+ASSEMBLER INVOKED BY: D:\Developing\Keil_v5\C51\BIN\A51.EXE SendKey.a51 SET(SMALL) DEBUG PRINT(.\Listings\SendKey.lst) O
+                      BJECT(.\Objects\SendKey.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                     ORG             0000H
+  00B7                 2                     RS              EQU P3.7
+  00B6                 3                     RW              EQU     P3.6
+  00B5                 4                     E               EQU P3.5
+0000 020100            5                     LJMP    MAIN
+0100                   6                     ORG             0100H
+0100 759001            7     MAIN:   MOV             P1,#00000001B
+0103 3197              8                     ACALL   ENABLE
+0105 759038            9                     MOV             P1,#00111000B
+0108 3197             10                     ACALL   ENABLE
+010A 75900F           11                     MOV             P1,#00001111B
+010D 3197             12                     ACALL   ENABLE
+010F 759006           13                     MOV             P1,#00000110B
+0112 3197             14                     ACALL   ENABLE
+                      15                     
+0114 C2AF             16     ASTART: CLR             EA
+0116 758920           17                     MOV             TMOD,#20H
+0119 758DF4           18                     MOV             TH1,#0F4H
+011C 758BF4           19                     MOV             TL1,#0F4H
+011F 758700           20                     MOV             PCON,#00H
+0122 D28E             21                     SETB    TR1
+0124 759850           22                     MOV             SCON,#50H
+                      23                     
+0127 7599E1           24     ALOOP1: MOV             SBUF,#0E1H              ;Preparation Start
+012A 3099FD           25                     JNB             TI,$
+012D C299             26                     CLR             TI
+                      27                     
+012F 3098FD           28                     JNB             RI,$
+0132 C298             29                     CLR             RI
+0134 E599             30                     MOV             A,SBUF
+0136 64E2             31                     XRL             A,#0E2H
+0138 70ED             32                     JNZ             ALOOP1                  ;Preparation End                
+                      33                     
+013A 31D1             34     LOOP:   ACALL   DELAYL
+013C D2B5             35                     SETB    E
+013E 3142             36                     ACALL   KEYSCAN
+0140 80F8             37                     SJMP    LOOP
+                      38                     
+0142 75A00F           39     KEYSCAN:MOV             P2,#0FH
+0145 E5A0             40                     MOV             A,P2
+0147 540F             41                     ANL             A,#0FH
+0149 FB               42                     MOV             R3,A
+014A 75A0F0           43                     MOV             P2,#0F0H
+014D E5A0             44                     MOV             A,P2
+014F 54F0             45                     ANL             A,#0F0H
+0151 4B               46                     ORL             A,R3
+0152 B4FF01           47                     CJNE    A,#0FFH,KEYPRO
+0155 22               48                     RET
+                      49                     
+0156 FB               50     KEYPRO: MOV             R3,A
+0157 9001DE           51                     MOV             DPTR,#KEYVALUE
+015A 7CFF             52                     MOV             R4,#0FFH
+                      53                     
+015C 0C               54     KEY1:   INC             R4
+015D EC               55                     MOV             A,R4
+015E 93               56                     MOVC    A,@A+DPTR
+015F 8B30             57                     MOV             30H,R3
+A51 MACRO ASSEMBLER  SENDKEY                                                              05/12/2020 10:11:24 PAGE     2
+
+0161 B530F8           58                     CJNE    A,30H,KEY1
+                      59     
+0164 EC               60                     MOV             A,R4
+0165 9001EE           61                     MOV             DPTR,#LCDDB
+0168 93               62                     MOVC    A,@A+DPTR
+0169 FC               63                     MOV             R4,A
+                      64                     
+016A 74FA             65                     MOV             A,#0FAH
+016C 6C               66                     XRL             A,R4
+016D 601C             67                     JZ              ENTER
+                      68                     
+016F 74FB             69                     MOV             A,#0FBH
+0171 6C               70                     XRL             A,R4
+0172 6010             71                     JZ              CLEAR
+                      72                     
+                      73                     
+0174 8C90             74                     MOV             P1,R4
+                      75                     
+0176 D2B7             76                     SETB    RS
+0178 C2B6             77                     CLR             RW
+017A C2B5             78                     CLR             E
+017C 31A2             79                     ACALL   DELAY
+017E C2B5             80                     CLR             E
+                      81                     
+0180 31B2             82     SENDTO: ACALL   SEND
+                      83                     
+0182 213A             84                     AJMP    LOOP
+                      85     
+0184 759010           86     CLEAR:  MOV             P1,#00010000B
+0187 3197             87                     ACALL   ENABLE
+0189 80F5             88                     SJMP    SENDTO
+                      89     
+018B 759006           90     ENTER:  MOV             P1,#00000110B
+018E 3197             91                     ACALL   ENABLE
+0190 7590C0           92                     MOV             P1,#0C0H
+0193 3197             93                     ACALL   ENABLE
+0195 80E9             94                     SJMP    SENDTO
+                      95     
+0197 C2B7             96     ENABLE: CLR             RS
+0199 C2B6             97                     CLR             RW
+019B C2B5             98                     CLR             E
+019D 31A2             99                     ACALL   DELAY
+019F D2B5            100                     SETB    E
+01A1 22              101                     RET
+                     102                     
+01A2 7590FF          103     DELAY:  MOV             P1,#0FFH
+01A5 C2B7            104                     CLR             RS
+01A7 D2B6            105                     SETB    RW
+01A9 C2B5            106                     CLR             E
+01AB 00              107                     NOP
+01AC D2B5            108                     SETB    E
+01AE 2097F1          109                     JB              P1.7,DELAY
+01B1 22              110                     RET
+                     111     
+01B2 7E00            112     SEND:   MOV             R6,#00H
+01B4 8C99            113                     MOV             SBUF,R4                 ;Communicaton Start
+01B6 EE              114                     MOV             A,R6
+01B7 2C              115                     ADD             A,R4
+01B8 FE              116                     MOV             R6,A
+                     117                     
+01B9 3099FD          118                     JNB             TI,$
+01BC C299            119                     CLR             TI
+                     120                     
+01BE 8E99            121                     MOV             SBUF,R6
+01C0 3099FD          122                     JNB             TI,$                    
+01C3 C299            123                     CLR             TI                              ;Communication End
+A51 MACRO ASSEMBLER  SENDKEY                                                              05/12/2020 10:11:24 PAGE     3
+
+                     124                     
+01C5 3098FD          125                     JNB             RI,$                    ;Stuck here
+01C8 C298            126                     CLR             RI
+01CA E599            127                     MOV             A,SBUF
+01CC 6400            128                     XRL             A,#00H
+01CE 70E2            129                     JNZ             SEND
+01D0 22              130                     RET
+                     131     
+01D1 7D30            132     DELAYL: MOV             R5,#30H
+01D3 7E30            133     NEXT1:  MOV             R6,#30H
+01D5 7F40            134     NEXT2:  MOV             R7,#40H
+01D7 DFFE            135                     DJNZ    R7,$
+01D9 DEFA            136                     DJNZ    R6,NEXT2
+01DB DDF6            137                     DJNZ    R5,NEXT1
+01DD 22              138                     RET
+                     139                             
+01DE 777B7D7E        140     KEYVALUE:DB     77H,7BH,7DH,7EH,0B7H,0BBH,0BDH,0BEH,0D7H,0DBH,0DDH,0DEH,0E7H,0EBH,0EDH,0EEH
+01E2 B7BBBDBE                
+01E6 D7DBDDDE                
+01EA E7EBEDEE                
+01EE 4469616E        141     LCDDB:   DB     44H,69H,61H,6EH,6BH,65H,31H,38H,30H,33H,4AH,67H,5AH,75H,0FAH,0FBH
+01F2 6B653138                
+01F6 30334A67                
+01FA 5A75FAFB                
+                     142                     END
+A51 MACRO ASSEMBLER  SENDKEY                                                              05/12/2020 10:11:24 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ALOOP1 . . . . . .  C ADDR   0127H   A   
+ASTART . . . . . .  C ADDR   0114H   A   
+CLEAR. . . . . . .  C ADDR   0184H   A   
+DELAY. . . . . . .  C ADDR   01A2H   A   
+DELAYL . . . . . .  C ADDR   01D1H   A   
+E. . . . . . . . .  B ADDR   00B0H.5 A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ENABLE . . . . . .  C ADDR   0197H   A   
+ENTER. . . . . . .  C ADDR   018BH   A   
+KEY1 . . . . . . .  C ADDR   015CH   A   
+KEYPRO . . . . . .  C ADDR   0156H   A   
+KEYSCAN. . . . . .  C ADDR   0142H   A   
+KEYVALUE . . . . .  C ADDR   01DEH   A   
+LCDDB. . . . . . .  C ADDR   01EEH   A   
+LOOP . . . . . . .  C ADDR   013AH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+NEXT1. . . . . . .  C ADDR   01D3H   A   
+NEXT2. . . . . . .  C ADDR   01D5H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PCON . . . . . . .  D ADDR   0087H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+RS . . . . . . . .  B ADDR   00B0H.7 A   
+RW . . . . . . . .  B ADDR   00B0H.6 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SEND . . . . . . .  C ADDR   01B2H   A   
+SENDTO . . . . . .  C ADDR   0180H   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,167 @@
+A51 MACRO ASSEMBLER  RECIVE                                                               05/12/2020 16:11:06 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\Recive.obj
+ASSEMBLER INVOKED BY: D:\Developing\Keil_v5\C51\BIN\A51.EXE Recive.a51 SET(SMALL) DEBUG PRINT(.\Listings\Recive.lst) OBJ
+                      ECT(.\Objects\Recive.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                     ORG             0000H
+  00A4                 2                     RS              EQU P2.4
+  00A5                 3                     RW              EQU     P2.5
+  00A6                 4                     E               EQU P2.6
+0000 0130              5                     AJMP    BSTART
+                       6                     
+0030                   7                     ORG             0030H
+0030 C2AF              8     BSTART: CLR             EA
+0032 758920            9                     MOV             TMOD,#20H
+0035 758DF4           10                     MOV             TH1,#0F4H
+0038 758BF4           11                     MOV             TL1,#0F4H
+003B 758700           12                     MOV             PCON,#00H
+003E D28E             13                     SETB    TR1
+0040 759850           14                     MOV             SCON,#50H
+                      15     
+0043 759001           16     DISPLAY:MOV             P1,#00000001B   ;LCD1602 INIT
+0046 11CA             17                     ACALL   ENABLE
+0048 759038           18                     MOV             P1,#00111000B
+004B 11CA             19                     ACALL   ENABLE
+004D 75900F           20                     MOV             P1,#00001111B
+0050 11CA             21                     ACALL   ENABLE
+0052 759006           22                     MOV             P1,#00000110B
+0055 11CA             23                     ACALL   ENABLE
+                      24     
+                      25     
+0057 3098FD           26     BLOOP1: JNB             RI,$
+005A C298             27                     CLR             RI
+005C E599             28                     MOV             A,SBUF
+005E 64E1             29                     XRL             A,#0E1H
+0060 70F5             30                     JNZ             BLOOP1
+0062 7599E2           31                     MOV             SBUF,#0E2H
+0065 3099FD           32                     JNB             TI,$
+0068 C299             33                     CLR             TI
+                      34                     
+006A 3098FD           35     RECIVE: JNB             RI,$
+006D C298             36                     CLR             RI
+                      37                     
+006F 7E00             38                     MOV             R6,#00H
+                      39                     
+0071 E599             40                     MOV             A,SBUF
+0073 FC               41                     MOV             R4,A
+                      42                     
+0074 2E               43                     ADD             A,R6
+0075 FE               44                     MOV             R6,A
+                      45                     
+                      46                     
+0076 3098FD           47                     JNB             RI,$            ;Stuck here
+0079 C298             48                     CLR             RI
+007B E599             49                     MOV             A,SBUF
+007D 6E               50                     XRL             A,R6
+007E 600A             51                     JZ              END1
+                      52                     
+0080 7599FF           53                     MOV             SBUF,#0FFH      ;Sum Doesn't Equal
+0083 3099FD           54                     JNB             TI,$
+0086 C299             55                     CLR             TI
+0088 80CD             56                     SJMP    BLOOP1
+                      57                     
+A51 MACRO ASSEMBLER  RECIVE                                                               05/12/2020 16:11:06 PAGE     2
+
+008A 759900           58     END1:   MOV             SBUF,#00H
+008D 3099FD           59                     JNB             TI,$
+0090 C299             60                     CLR             TI
+                      61     
+0092 74FA             62     LOOP1:  MOV             A,#0FAH
+0094 6C               63                     XRL             A,R4
+0095 6027             64                     JZ              ENTER
+                      65                     
+0097 74FB             66                     MOV             A,#0FBH
+0099 6C               67                     XRL             A,R4
+009A 601B             68                     JZ              CLEAR
+                      69                     
+                      70                     
+009C D2A6             71                     SETB    E
+009E 8C90             72                     MOV             P1,R4
+00A0 D2A4             73                     SETB    RS
+00A2 C2A5             74                     CLR             RW
+00A4 C2A6             75                     CLR             E
+00A6 11D5             76                     ACALL   DELAYL
+                      77                     
+00A8 80C0             78                     SJMP    RECIVE
+                      79     
+00AA 7B20             80     DELAY:  MOV             R3,#20H
+00AC 7C20             81     D1:             MOV             R4,#20H
+00AE 7D24             82     D2:             MOV             R5,#24H
+00B0 DDFE             83                     DJNZ    R5,$
+00B2 DCFA             84                     DJNZ    R4,D2
+00B4 DBF6             85                     DJNZ    R3,D1
+00B6 22               86                     RET     
+                      87     
+00B7 759010           88     CLEAR:  MOV             P1,#00010000B
+00BA 11CA             89                     ACALL   ENABLE
+00BC 016A             90                     AJMP    RECIVE
+                      91     
+00BE 759006           92     ENTER:  MOV             P1,#00000110B
+00C1 11CA             93                     ACALL   ENABLE
+00C3 7590C0           94                     MOV             P1,#0C0H
+00C6 11CA             95                     ACALL   ENABLE
+00C8 016A             96                     AJMP    RECIVE
+                      97     
+00CA C2A4             98     ENABLE: CLR             RS
+00CC C2A5             99                     CLR             RW
+00CE C2A6            100                     CLR             E
+00D0 11D5            101                     ACALL   DELAYL
+00D2 D2A6            102                     SETB    E
+00D4 22              103                     RET
+00D5 7590FF          104     DELAYL: MOV             P1,#0FFH
+00D8 C2A4            105                     CLR             RS
+00DA D2A5            106                     SETB    RW
+00DC C2A6            107                     CLR             E
+00DE 00              108                     NOP
+00DF D2A6            109                     SETB    E
+00E1 2097C6          110                     JB              P1.7,DELAY
+00E4 22              111                     RET
+                     112                     
+                     113                     END
+A51 MACRO ASSEMBLER  RECIVE                                                               05/12/2020 16:11:06 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BLOOP1 . . . . . .  C ADDR   0057H   A   
+BSTART . . . . . .  C ADDR   0030H   A   
+CLEAR. . . . . . .  C ADDR   00B7H   A   
+D1 . . . . . . . .  C ADDR   00ACH   A   
+D2 . . . . . . . .  C ADDR   00AEH   A   
+DELAY. . . . . . .  C ADDR   00AAH   A   
+DELAYL . . . . . .  C ADDR   00D5H   A   
+DISPLAY. . . . . .  C ADDR   0043H   A   
+E. . . . . . . . .  B ADDR   00A0H.6 A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ENABLE . . . . . .  C ADDR   00CAH   A   
+END1 . . . . . . .  C ADDR   008AH   A   
+ENTER. . . . . . .  C ADDR   00BEH   A   
+LOOP1. . . . . . .  C ADDR   0092H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PCON . . . . . . .  D ADDR   0087H   A   
+RECIVE . . . . . .  C ADDR   006AH   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+RS . . . . . . . .  B ADDR   00A0H.4 A   
+RW . . . . . . . .  B ADDR   00A0H.5 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

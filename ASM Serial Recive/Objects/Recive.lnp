@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\Recive.obj" 
+TO ".\Objects\Recive" 
+PRINT(".\Listings\Recive.m51") RAMSIZE(256) 
