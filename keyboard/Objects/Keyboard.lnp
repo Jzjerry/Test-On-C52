@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\Key.obj" 
+TO ".\Objects\Keyboard" 
+PRINT(".\Listings\Keyboard.m51")

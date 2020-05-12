@@ -1,0 +1,135 @@
+A51 MACRO ASSEMBLER  KEY                                                                  05/03/2020 15:52:07 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\Key.obj
+ASSEMBLER INVOKED BY: D:\Developing\Keil_v5\C51\BIN\A51.EXE Key.a51 SET(SMALL) DEBUG PRINT(.\Listings\Key.lst) OBJECT(.\
+                      Objects\Key.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                     ORG             0000H
+  00B7                 2                     RS              EQU P3.7
+  00B6                 3                     RW              EQU     P3.6
+  00B5                 4                     E               EQU P3.5
+0000 020100            5                     LJMP    MAIN
+0100                   6                     ORG             0100H
+0100 75A001            7     MAIN:   MOV             P2,#00000001B
+0103 3161              8                     ACALL   ENABLE
+0105 75A038            9                     MOV             P2,#00111000B
+0108 3161             10                     ACALL   ENABLE
+010A 75A00F           11                     MOV             P2,#00001111B
+010D 3161             12                     ACALL   ENABLE
+010F 75A006           13                     MOV             P2,#00000110B
+0112 3161             14                     ACALL   ENABLE
+0114 75A0C0           15                     MOV             P2,#0C0H
+0117 3161             16                     ACALL   ENABLE
+0119 317C             17     LOOP:   ACALL   DELAYL
+011B D2B5             18                     SETB    E
+011D 3124             19                     ACALL   KEYSCAN
+011F 853180           20                     MOV             P0,31H
+0122 80F5             21                     SJMP    LOOP
+0124 75900F           22     KEYSCAN:MOV             P1,#0FH
+0127 E590             23                     MOV             A,P1
+0129 540F             24                     ANL             A,#0FH
+012B FB               25                     MOV             R3,A
+012C 7590F0           26                     MOV             P1,#0F0H
+012F E590             27                     MOV             A,P1
+0131 54F0             28                     ANL             A,#0F0H
+0133 4B               29                     ORL             A,R3
+0134 B4FF01           30                     CJNE    A,#0FFH,KEYPRO
+0137 22               31                     RET
+0138 FB               32     KEYPRO: MOV             R3,A
+0139 900189           33                     MOV             DPTR,#KEYVALUE
+013C 7CFF             34                     MOV             R4,#0FFH
+013E 0C               35     KEY1:   INC             R4
+013F EC               36                     MOV             A,R4
+0140 93               37                     MOVC    A,@A+DPTR
+0141 8B30             38                     MOV             30H,R3
+0143 B530F8           39                     CJNE    A,30H,KEY1
+0146 EC               40                     MOV             A,R4
+0147 900199           41                     MOV             DPTR,#LEDDB
+014A 93               42                     MOVC    A,@A+DPTR
+014B F531             43                     MOV             31H,A
+014D EC               44                     MOV             A,R4
+014E 9001A9           45                     MOV             DPTR,#LCDDB
+0151 93               46                     MOVC    A,@A+DPTR
+0152 FC               47                     MOV             R4,A
+0153 8CA0             48                     MOV             P2,R4
+0155 D2B7             49                     SETB    RS
+0157 C2B6             50                     CLR             RW
+0159 C2B5             51                     CLR             E
+015B 316C             52                     ACALL   DELAY
+015D C2B5             53                     CLR             E
+015F 2119             54                     AJMP    LOOP
+0161 C2B7             55     ENABLE: CLR             RS
+0163 C2B6             56                     CLR             RW
+0165 C2B5             57                     CLR             E
+A51 MACRO ASSEMBLER  KEY                                                                  05/03/2020 15:52:07 PAGE     2
+
+0167 316C             58                     ACALL   DELAY
+0169 D2B5             59                     SETB    E
+016B 22               60                     RET
+016C 75A0FF           61     DELAY:  MOV             P2,#0FFH
+016F C2B7             62                     CLR             RS
+0171 D2B6             63                     SETB    RW
+0173 C2B5             64                     CLR             E
+0175 00               65                     NOP
+0176 D2B5             66                     SETB    E
+0178 20A7F1           67                     JB              P2.7,DELAY
+017B 22               68                     RET
+017C 7D40             69     DELAYL: MOV             R5,#40H
+017E 7E46             70     NEXT1:  MOV             R6,#46H
+0180 7F46             71     NEXT2:  MOV             R7,#46H
+0182 DFFE             72                     DJNZ    R7,$
+0184 DEFA             73                     DJNZ    R6,NEXT2
+0186 DDF6             74                     DJNZ    R5,NEXT1
+0188 22               75                     RET
+                      76                             
+0189 777B7D7E         77     KEYVALUE:DB     77H,7BH,7DH,7EH,0B7H,0BBH,0BDH,0BEH,0D7H,0DBH,0DDH,0DEH,0E7H,0EBH,0EDH,0EEH
+018D B7BBBDBE                
+0191 D7DBDDDE                
+0195 E7EBEDEE                
+0199 C0F9A4B0         78     LEDDB:   DB     0C0H,0F9H,0A4H,0B0H,99H,92H,82H,0F8H,80H,90H,88H,83H,0C6H,0A1H,86H,8EH
+019D 999282F8                
+01A1 80908883                
+01A5 C6A1868E                
+01A9 30313233         79     LCDDB:   DB     30H,31H,32H,33H,34H,35H,36H,37H,38H,39H,41H,42H,43H,44H,45H,46H
+01AD 34353637                
+01B1 38394142                
+01B5 43444546                
+                      80                     END
+A51 MACRO ASSEMBLER  KEY                                                                  05/03/2020 15:52:07 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   016CH   A   
+DELAYL . . . . . .  C ADDR   017CH   A   
+E. . . . . . . . .  B ADDR   00B0H.5 A   
+ENABLE . . . . . .  C ADDR   0161H   A   
+KEY1 . . . . . . .  C ADDR   013EH   A   
+KEYPRO . . . . . .  C ADDR   0138H   A   
+KEYSCAN. . . . . .  C ADDR   0124H   A   
+KEYVALUE . . . . .  C ADDR   0189H   A   
+LCDDB. . . . . . .  C ADDR   01A9H   A   
+LEDDB. . . . . . .  C ADDR   0199H   A   
+LOOP . . . . . . .  C ADDR   0119H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+NEXT1. . . . . . .  C ADDR   017EH   A   
+NEXT2. . . . . . .  C ADDR   0180H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+RS . . . . . . . .  B ADDR   00B0H.7 A   
+RW . . . . . . . .  B ADDR   00B0H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
